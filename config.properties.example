@@ -1,0 +1,5 @@
+localport=2525
+server=smtp.example.com
+serverport=465
+username=example
+password=example
