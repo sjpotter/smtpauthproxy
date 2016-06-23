@@ -11,11 +11,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public abstract class AbstractProxy implements Proxy {
-    protected Config config;
-    protected Socket client;
-    protected Socket smtpServer;
+    final Config config;
+    Socket smtpServer;
+    final private Socket client;
 
-    public AbstractProxy(Config c, Socket client) {
+    AbstractProxy(Config c, Socket client) {
         this.config = c;
         this.client = client;
     }
@@ -28,10 +28,7 @@ public abstract class AbstractProxy implements Proxy {
         OutputStream clientWriter;
         InputStream clientReader;
 
-        String authString = genAuth();
-
         final ByteArrayOutputStream header = new ByteArrayOutputStream();
-        ByteArrayOutputStream ret = new ByteArrayOutputStream();
 
         try {
             smtpServerWriter = smtpServer.getOutputStream();
@@ -46,18 +43,14 @@ public abstract class AbstractProxy implements Proxy {
                 header.write(smtpServerReader.read());
             }
 
-            //2a. auth (assumes supports auth plain)
-            smtpServerWriter.write(authString.getBytes());
-
-            //2b. read response: (would be smarter to check result)
-            ret.write(smtpServerReader.read());
-            while (smtpServerReader.available() != 0) {
-                ret.write(smtpServerReader.read());
-            }
+            doAuth();
 
             //1b. write header to client
             clientWriter.write(header.toByteArray());
         } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        } catch (Exception e) {
             e.printStackTrace();
             return;
         }
@@ -72,7 +65,51 @@ public abstract class AbstractProxy implements Proxy {
         c2s.start(); s2c.start();
     }
 
-    private String genAuth() {
+    private void doAuth() throws Exception {
+        OutputStream smtpServerWriter = smtpServer.getOutputStream();
+        InputStream smtpServerReader = smtpServer.getInputStream();
+
+        String ehlo = "ehlo " + config.getServer() + "\n";
+        smtpServerWriter.write(ehlo.getBytes());
+
+        ByteArrayOutputStream byteAbilities = new ByteArrayOutputStream();
+        byteAbilities.write(smtpServerReader.read());
+        while (smtpServerReader.available() != 0) {
+            byteAbilities.write(smtpServerReader.read());
+        }
+        String stringAbilities = new String(byteAbilities.toByteArray(), "ASCII");
+        String[] abilities = stringAbilities.split("\\n");
+        for (String ability : abilities) {
+            if (ability.startsWith("250-AUTH")) {
+                if (ability.contains("PLAIN")) {
+                    doPlain();
+                } else if (ability.contains("LOGIN")) {
+                    throw new Exception("LOGIN Unsupported yet");
+                } else {
+                    throw new Exception("Unsupported AUTH types: " + ability);
+                }
+
+                break;
+            }
+        }
+    }
+
+    private void doPlain() throws IOException {
+        OutputStream smtpServerWriter = smtpServer.getOutputStream();
+        InputStream smtpServerReader = smtpServer.getInputStream();
+
+        ByteArrayOutputStream ret = new ByteArrayOutputStream();
+
+        smtpServerWriter.write(getPlainAuth().getBytes());
+
+        //would be smart to do something with this
+        ret.write(smtpServerReader.read());
+        while (smtpServerReader.available() != 0) {
+            ret.write(smtpServerReader.read());
+        }
+    }
+
+    private String getPlainAuth() {
         String authString = config.getUser() + "\0" + config.getUser() + "\0" + config.getPassword();
         String base64Auth = Base64.encodeBase64String(authString.getBytes());
 

@@ -17,7 +17,7 @@ public class Config {
         return localPort;
     }
 
-    public void setLocalPort(int localPort) {
+    private void setLocalPort(int localPort) {
         this.localPort = localPort;
     }
 
@@ -25,7 +25,7 @@ public class Config {
         return server;
     }
 
-    public void setServer(String server) {
+    private void setServer(String server) {
         this.server = server;
     }
 
@@ -33,7 +33,7 @@ public class Config {
         return serverPort;
     }
 
-    public void setServerPort(int serverPort) {
+    private void setServerPort(int serverPort) {
         this.serverPort = serverPort;
     }
 
@@ -41,7 +41,7 @@ public class Config {
         return user;
     }
 
-    public void setUser(String user) {
+    private void setUser(String user) {
         this.user = user;
     }
 
@@ -49,11 +49,11 @@ public class Config {
         return password;
     }
 
-    public void setPassword(String password) {
+    private void setPassword(String password) {
         this.password = password;
     }
 
-    public void setSSL(String isSSL) { this.ssl = Boolean.parseBoolean(isSSL); }
+    private void setSSL(String isSSL) { this.ssl = Boolean.parseBoolean(isSSL); }
 
     public boolean getSSL() { return ssl; }
 
@@ -64,11 +64,7 @@ public class Config {
 
         FileInputStream file = new FileInputStream(propFile);
 
-        if (file != null) {
-            props.load(file);
-        } else {
-            throw new FileNotFoundException("property file '" + propFile + "' not found in the classpath");
-        }
+        props.load(file);
 
         if (!props.containsKey("localport") || !props.containsKey("server") || !props.containsKey("serverport") || !props.containsKey("username") || !props.containsKey("password")) {
             System.out.println("props = " + props.toString());

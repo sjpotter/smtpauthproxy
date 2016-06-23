@@ -8,7 +8,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class SmtpAuthProxy {
+class SmtpAuthProxy {
     public static void main(String[] args) {
         Config config;
 

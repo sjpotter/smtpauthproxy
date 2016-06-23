@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class SocketsReaderWriter extends Thread {
-    private InputStream reader;
-    private OutputStream writer;
+    final private InputStream reader;
+    final private OutputStream writer;
     private SocketsReaderWriter other;
 
     public SocketsReaderWriter(InputStream r, OutputStream w) {
@@ -27,11 +27,11 @@ public class SocketsReaderWriter extends Thread {
                 writer.flush();
             }
         }
-        catch (IOException e) {}
+        catch (IOException ignored) {}
 
         // if the client closed its stream to us, we close our stream
-        // to the server.  First, stop the other thread
-        other.stop();
-        try { writer.close(); } catch (IOException e) {}
+        // to the server.  First, interrupt the other thread to break the wait
+        other.interrupt();
+        try { writer.close(); } catch (IOException ignored) {}
     }
 }
