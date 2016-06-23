@@ -23,8 +23,8 @@ public abstract class AbstractProxy implements Proxy {
     public abstract void connect() throws IOException;
 
     public void run() {
-        OutputStream serverWriter;
-        InputStream serverReader;
+        OutputStream smtpServerWriter;
+        InputStream smtpServerReader;
         OutputStream clientWriter;
         InputStream clientReader;
 
@@ -34,25 +34,25 @@ public abstract class AbstractProxy implements Proxy {
         ByteArrayOutputStream ret = new ByteArrayOutputStream();
 
         try {
-            serverWriter = smtpServer.getOutputStream();
-            serverReader = smtpServer.getInputStream();
+            smtpServerWriter = smtpServer.getOutputStream();
+            smtpServerReader = smtpServer.getInputStream();
 
             clientWriter = client.getOutputStream();
             clientReader = client.getInputStream();
 
             //1a. read header
-            header.write(serverReader.read());
-            while (serverReader.available() != 0) {
-                header.write(serverReader.read());
+            header.write(smtpServerReader.read());
+            while (smtpServerReader.available() != 0) {
+                header.write(smtpServerReader.read());
             }
 
-            //2a. auth
-            serverWriter.write(authString.getBytes());
+            //2a. auth (assumes supports auth plain)
+            smtpServerWriter.write(authString.getBytes());
 
             //2b. read response: (would be smarter to check result)
-            ret.write(serverReader.read());
-            while (serverReader.available() != 0) {
-                ret.write(serverReader.read());
+            ret.write(smtpServerReader.read());
+            while (smtpServerReader.available() != 0) {
+                ret.write(smtpServerReader.read());
             }
 
             //1b. write header to client
@@ -63,8 +63,8 @@ public abstract class AbstractProxy implements Proxy {
         }
 
         //3. connect the sockets together
-        ReaderWriter c2s = new ReaderWriter(clientReader, serverWriter);
-        ReaderWriter s2c = new ReaderWriter(serverReader, clientWriter);
+        ReaderWriter c2s = new ReaderWriter(clientReader, smtpServerWriter);
+        ReaderWriter s2c = new ReaderWriter(smtpServerReader, clientWriter);
 
         c2s.setOther(s2c);
         s2c.setOther(c2s);
