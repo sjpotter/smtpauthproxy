@@ -9,7 +9,7 @@ public class ReaderWriter extends Thread {
     private OutputStream writer;
     private ReaderWriter other;
 
-    ReaderWriter(InputStream r, OutputStream w) {
+    public ReaderWriter(InputStream r, OutputStream w) {
         reader = r;
         writer = w;
     }
