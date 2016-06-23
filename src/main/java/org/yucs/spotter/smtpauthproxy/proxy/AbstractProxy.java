@@ -47,10 +47,7 @@ public abstract class AbstractProxy implements Proxy {
 
             //1b. write header to client
             clientWriter.write(header.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        } catch (Exception e) {
+        } catch (IOException | ProxyException e) {
             e.printStackTrace();
             return;
         }
@@ -65,7 +62,7 @@ public abstract class AbstractProxy implements Proxy {
         c2s.start(); s2c.start();
     }
 
-    private void doAuth() throws Exception {
+    private void doAuth() throws ProxyException, IOException {
         OutputStream smtpServerWriter = smtpServer.getOutputStream();
         InputStream smtpServerReader = smtpServer.getInputStream();
 
@@ -84,9 +81,9 @@ public abstract class AbstractProxy implements Proxy {
                 if (ability.contains("PLAIN")) {
                     doPlain();
                 } else if (ability.contains("LOGIN")) {
-                    throw new Exception("LOGIN Unsupported yet");
+                    throw new ProxyException("LOGIN Unsupported yet");
                 } else {
-                    throw new Exception("Unsupported AUTH types: " + ability);
+                    throw new ProxyException("Unsupported AUTH types: " + ability);
                 }
 
                 break;
