@@ -1,4 +1,4 @@
-package org.yucs.spotter.smtpauthproxy;
+package org.yucs.spotter.smtpauthproxy.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

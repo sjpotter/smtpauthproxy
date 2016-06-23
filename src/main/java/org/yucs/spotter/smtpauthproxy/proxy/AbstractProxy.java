@@ -1,6 +1,8 @@
-package org.yucs.spotter.smtpauthproxy;
+package org.yucs.spotter.smtpauthproxy.proxy;
 
 import org.apache.commons.codec.binary.Base64;
+import org.yucs.spotter.smtpauthproxy.utils.Config;
+import org.yucs.spotter.smtpauthproxy.utils.ReaderWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

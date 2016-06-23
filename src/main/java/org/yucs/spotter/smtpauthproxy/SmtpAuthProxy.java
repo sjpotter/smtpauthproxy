@@ -1,5 +1,9 @@
 package org.yucs.spotter.smtpauthproxy;
 
+import org.yucs.spotter.smtpauthproxy.proxy.Proxy;
+import org.yucs.spotter.smtpauthproxy.proxy.ProxyFactory;
+import org.yucs.spotter.smtpauthproxy.utils.Config;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
