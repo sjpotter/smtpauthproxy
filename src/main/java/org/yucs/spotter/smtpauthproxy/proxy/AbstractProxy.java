@@ -2,7 +2,7 @@ package org.yucs.spotter.smtpauthproxy.proxy;
 
 import org.apache.commons.codec.binary.Base64;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
-import org.yucs.spotter.smtpauthproxy.utils.ReaderWriter;
+import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -63,8 +63,8 @@ public abstract class AbstractProxy implements Proxy {
         }
 
         //3. connect the sockets together
-        ReaderWriter c2s = new ReaderWriter(clientReader, smtpServerWriter);
-        ReaderWriter s2c = new ReaderWriter(smtpServerReader, clientWriter);
+        SocketsReaderWriter c2s = new SocketsReaderWriter(clientReader, smtpServerWriter);
+        SocketsReaderWriter s2c = new SocketsReaderWriter(smtpServerReader, clientWriter);
 
         c2s.setOther(s2c);
         s2c.setOther(c2s);

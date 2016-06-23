@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ReaderWriter extends Thread {
+public class SocketsReaderWriter extends Thread {
     private InputStream reader;
     private OutputStream writer;
-    private ReaderWriter other;
+    private SocketsReaderWriter other;
 
-    public ReaderWriter(InputStream r, OutputStream w) {
+    public SocketsReaderWriter(InputStream r, OutputStream w) {
         reader = r;
         writer = w;
     }
 
-    public void setOther(ReaderWriter t) {
+    public void setOther(SocketsReaderWriter t) {
         other = t;
     }
 
