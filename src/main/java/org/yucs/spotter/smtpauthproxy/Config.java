@@ -53,7 +53,7 @@ public class Config {
         this.password = password;
     }
 
-    public void setSSL(String isSSL) { this.ssl = Boolean.getBoolean(isSSL); }
+    public void setSSL(String isSSL) { this.ssl = Boolean.parseBoolean(isSSL); }
 
     public boolean getSSL() { return ssl; }
 
