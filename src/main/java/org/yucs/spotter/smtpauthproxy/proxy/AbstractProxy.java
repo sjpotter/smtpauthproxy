@@ -3,6 +3,8 @@ package org.yucs.spotter.smtpauthproxy.proxy;
 import org.apache.commons.codec.binary.Base64;
 import org.yucs.spotter.smtpauthproxy.filter.Filter;
 import org.yucs.spotter.smtpauthproxy.filter.LoggingFilter;
+import org.yucs.spotter.smtpauthproxy.logger.FileLogger;
+import org.yucs.spotter.smtpauthproxy.logger.Logger;
 import org.yucs.spotter.smtpauthproxy.logger.StdoutLogger;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
@@ -19,14 +21,22 @@ public abstract class AbstractProxy implements Proxy {
     final private Socket client;
     final private Filter c2s_filter;
     final private Filter s2c_filter;
+    Logger l = null;
 
-    AbstractProxy(Config c, Socket client) {
+    AbstractProxy(Config c, Socket client) throws ProxyException {
         this.config = c;
         this.client = client;
 
-        c2s_filter = new LoggingFilter("c2s: ", new StdoutLogger());
+        //l = new StdoutLogger();
+        try {
+            l = new FileLogger("test.log");
+        } catch (IOException e) {
+            throw new ProxyException("Couldn't open test.log", e);
+        }
+
+        c2s_filter = new LoggingFilter("c2s: ", l);
         //c2s_filter = new NullFilter();
-        s2c_filter = new LoggingFilter("s2c: ", new StdoutLogger());
+        s2c_filter = new LoggingFilter("s2c: ", l);
         //s2c_filter = new NullFilter();
     }
 
@@ -74,6 +84,18 @@ public abstract class AbstractProxy implements Proxy {
         s2c.setOther(c2s);
 
         c2s.start(); s2c.start();
+
+        try {
+            c2s.join(); s2c.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            l.Close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void doAuth() throws ProxyException, IOException {

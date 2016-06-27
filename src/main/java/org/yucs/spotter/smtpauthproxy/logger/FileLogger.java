@@ -7,7 +7,7 @@ import java.io.IOException;
 public class FileLogger implements Logger {
     FileWriter out;
 
-    FileLogger(String f) throws IOException {
+    public FileLogger(String f) throws IOException {
         out = new FileWriter(f);
     }
 
@@ -15,5 +15,10 @@ public class FileLogger implements Logger {
     public void Log(String s) throws IOException {
         out.write(s);
         out.write("\n");
+    }
+
+    @Override
+    public void Close() throws IOException {
+        out.close();
     }
 }

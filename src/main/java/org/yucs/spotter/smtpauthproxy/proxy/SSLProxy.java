@@ -8,7 +8,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class SSLProxy extends AbstractProxy {
-    public SSLProxy(Config c, Socket client) {
+    public SSLProxy(Config c, Socket client) throws ProxyException {
         super(c, client);
     }
 

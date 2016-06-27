@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class PlainProxy extends AbstractProxy {
 
-    public PlainProxy(Config c, Socket client) {
+    public PlainProxy(Config c, Socket client) throws ProxyException {
         super(c, client);
     }
 

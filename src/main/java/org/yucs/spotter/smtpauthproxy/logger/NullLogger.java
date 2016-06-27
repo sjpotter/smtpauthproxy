@@ -7,4 +7,7 @@ public class NullLogger implements Logger {
     public void Log(String s) throws IOException {
         return;
     }
+
+    @Override
+    public void Close() { }
 }

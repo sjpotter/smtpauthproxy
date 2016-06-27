@@ -5,7 +5,7 @@ import org.yucs.spotter.smtpauthproxy.utils.Config;
 import java.net.Socket;
 
 public class ProxyFactory {
-    public static Proxy getProxy(Config c, Socket client) {
+    public static Proxy getProxy(Config c, Socket client) throws ProxyException {
         if (c.getSSL())
             return new SSLProxy(c, client);
 

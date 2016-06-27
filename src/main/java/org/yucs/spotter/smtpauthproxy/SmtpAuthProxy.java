@@ -1,6 +1,7 @@
 package org.yucs.spotter.smtpauthproxy;
 
 import org.yucs.spotter.smtpauthproxy.proxy.Proxy;
+import org.yucs.spotter.smtpauthproxy.proxy.ProxyException;
 import org.yucs.spotter.smtpauthproxy.proxy.ProxyFactory;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 
@@ -28,6 +29,8 @@ class SmtpAuthProxy {
                 new Thread(proxy).start();
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ProxyException e) {
             e.printStackTrace();
         }
     }

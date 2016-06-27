@@ -5,4 +5,7 @@ public class StdoutLogger implements Logger {
     public void Log(String s) {
         System.out.println(s);
     }
+
+    @Override
+    public void Close() { }
 }

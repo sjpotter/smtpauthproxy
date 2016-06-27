@@ -1,5 +1,6 @@
 package org.yucs.spotter.smtpauthproxy.proxy;
 
-class ProxyException extends Exception {
+public class ProxyException extends Exception {
     ProxyException(String s) { super(s); }
+    ProxyException(String s, Exception e) { super(s, e); }
 }
