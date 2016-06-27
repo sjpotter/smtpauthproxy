@@ -2,6 +2,7 @@ package org.yucs.spotter.smtpauthproxy.filter;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.yucs.spotter.smtpauthproxy.logger.NullLogger;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
@@ -12,7 +13,7 @@ public class LoggingFilterTest {
 
     @Before
     public void setUp() throws Exception {
-        n = new LoggingFilter("");
+        n = new LoggingFilter("", new NullLogger());
     }
 
     @Test

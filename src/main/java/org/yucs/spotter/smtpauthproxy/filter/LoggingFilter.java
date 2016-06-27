@@ -1,5 +1,7 @@
 package org.yucs.spotter.smtpauthproxy.filter;
 
+import org.yucs.spotter.smtpauthproxy.logger.Logger;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -7,15 +9,15 @@ import java.util.List;
 
 public class LoggingFilter implements Filter {
     final String prefix;
-    List<String> output = new LinkedList<String>();
-
     static final String delim = "\r\n";
 
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
     final ByteArrayOutputStream ready = new ByteArrayOutputStream();
+    final Logger logger;
 
-    public LoggingFilter(String p) {
+    public LoggingFilter(String p, Logger l) {
         prefix = p;
+        logger = l;
     }
 
     @Override
@@ -25,7 +27,7 @@ public class LoggingFilter implements Filter {
         String temp = new String(data.toByteArray()); //.replaceAll("\0", "");
         String[] splits = temp.split(delim, -1);
         for(int i=0; i < splits.length - 1; i++) {
-            System.out.println(prefix + splits[i]);
+            logger.Log(prefix + splits[i]);
             ready.write(splits[i].getBytes());
             ready.write(delim.getBytes());
         }
@@ -49,7 +51,7 @@ public class LoggingFilter implements Filter {
     @Override
     public byte[] Flush() throws IOException {
         String temp = new String(data.toByteArray());
-        System.out.println(prefix + temp);
+        logger.Log(prefix + temp);
 
         ready.write(data.toByteArray());
 

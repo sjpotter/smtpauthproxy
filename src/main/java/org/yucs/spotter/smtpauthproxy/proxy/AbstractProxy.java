@@ -3,6 +3,7 @@ package org.yucs.spotter.smtpauthproxy.proxy;
 import org.apache.commons.codec.binary.Base64;
 import org.yucs.spotter.smtpauthproxy.filter.Filter;
 import org.yucs.spotter.smtpauthproxy.filter.LoggingFilter;
+import org.yucs.spotter.smtpauthproxy.logger.StdoutLogger;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
 
@@ -23,9 +24,9 @@ public abstract class AbstractProxy implements Proxy {
         this.config = c;
         this.client = client;
 
-        c2s_filter = new LoggingFilter("c2s: ");
+        c2s_filter = new LoggingFilter("c2s: ", new StdoutLogger());
         //c2s_filter = new NullFilter();
-        s2c_filter = new LoggingFilter("s2c: ");
+        s2c_filter = new LoggingFilter("s2c: ", new StdoutLogger());
         //s2c_filter = new NullFilter();
     }
 
@@ -51,12 +52,15 @@ public abstract class AbstractProxy implements Proxy {
             while (smtpServerReader.available() != 0) {
                 header.write(smtpServerReader.read());
             }
-            s2c_filter.Input(header.toByteArray(), header.size());
 
             doAuth();
 
             //1b. write header to client
-            clientWriter.write(header.toByteArray());
+            s2c_filter.Input(header.toByteArray(), header.size());
+            if (!s2c_filter.Ready()) {
+                throw new ProxyException("header wasn't ready through filter");
+            }
+            clientWriter.write(s2c_filter.ReadyOutput());
         } catch (IOException | ProxyException e) {
             e.printStackTrace();
             return;
