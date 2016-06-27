@@ -1,5 +1,7 @@
 package org.yucs.spotter.smtpauthproxy.utils;
 
+import org.yucs.spotter.smtpauthproxy.filter.Filter;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,10 +10,12 @@ public class SocketsReaderWriter extends Thread {
     final private InputStream reader;
     final private OutputStream writer;
     private SocketsReaderWriter other;
+    final private Filter filter;
 
-    public SocketsReaderWriter(InputStream r, OutputStream w) {
+    public SocketsReaderWriter(InputStream r, OutputStream w, Filter f) {
         reader = r;
         writer = w;
+        filter = f;
     }
 
     public void setOther(SocketsReaderWriter t) {
@@ -23,9 +27,14 @@ public class SocketsReaderWriter extends Thread {
         int bytes_read;
         try {
             while((bytes_read = reader.read(buffer)) != -1) {
-                writer.write(buffer, 0, bytes_read);
-                writer.flush();
+                filter.Input(buffer, bytes_read);
+                if (filter.Ready()) {
+                    writer.write(filter.ReadyOutput());
+                    writer.flush();
+                }
             }
+            writer.write(filter.Flush());
+            writer.flush();
         }
         catch (IOException ignored) {}
 

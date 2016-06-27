@@ -1,6 +1,9 @@
 package org.yucs.spotter.smtpauthproxy.proxy;
 
 import org.apache.commons.codec.binary.Base64;
+import org.yucs.spotter.smtpauthproxy.filter.Filter;
+import org.yucs.spotter.smtpauthproxy.filter.LoggingFilter;
+import org.yucs.spotter.smtpauthproxy.filter.NoFilter;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
 
@@ -14,10 +17,17 @@ public abstract class AbstractProxy implements Proxy {
     final Config config;
     Socket smtpServer;
     final private Socket client;
+    final private Filter c2s_filter;
+    final private Filter s2c_filter;
 
     AbstractProxy(Config c, Socket client) {
         this.config = c;
         this.client = client;
+
+        c2s_filter = new LoggingFilter("c2s: ");
+        //c2s_filter = new NoFilter();
+        s2c_filter = new LoggingFilter("s2c: ");
+        //s2c_filter = new NoFilter();
     }
 
     public abstract void connect() throws IOException;
@@ -42,6 +52,7 @@ public abstract class AbstractProxy implements Proxy {
             while (smtpServerReader.available() != 0) {
                 header.write(smtpServerReader.read());
             }
+            s2c_filter.Input(header.toByteArray(), header.size());
 
             doAuth();
 
@@ -53,8 +64,8 @@ public abstract class AbstractProxy implements Proxy {
         }
 
         //3. connect the sockets together
-        SocketsReaderWriter c2s = new SocketsReaderWriter(clientReader, smtpServerWriter);
-        SocketsReaderWriter s2c = new SocketsReaderWriter(smtpServerReader, clientWriter);
+        SocketsReaderWriter c2s = new SocketsReaderWriter(clientReader, smtpServerWriter, c2s_filter);
+        SocketsReaderWriter s2c = new SocketsReaderWriter(smtpServerReader, clientWriter, s2c_filter);
 
         c2s.setOther(s2c);
         s2c.setOther(c2s);
@@ -66,8 +77,9 @@ public abstract class AbstractProxy implements Proxy {
         OutputStream smtpServerWriter = smtpServer.getOutputStream();
         InputStream smtpServerReader = smtpServer.getInputStream();
 
-        String ehlo = "ehlo " + config.getServer() + "\n";
-        smtpServerWriter.write(ehlo.getBytes());
+        byte[] ehlo = new String("ehlo " + config.getServer() + "\n").getBytes();
+
+        smtpServerWriter.write(ehlo);
 
         ByteArrayOutputStream byteAbilities = new ByteArrayOutputStream();
         byteAbilities.write(smtpServerReader.read());
