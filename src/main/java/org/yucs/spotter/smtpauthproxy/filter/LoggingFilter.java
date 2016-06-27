@@ -49,13 +49,9 @@ public class LoggingFilter implements Filter {
     @Override
     public byte[] Flush() throws IOException {
         String temp = new String(data.toByteArray());
+        System.out.println(prefix + temp);
 
-        String[] splits = temp.split(delim);
-        for(int i=0; i < splits.length; i++) {
-            System.out.println(prefix + splits[i]);
-            ready.write(splits[i].getBytes());
-            ready.write(delim.getBytes());
-        }
+        ready.write(data.toByteArray());
 
         byte[] output = ready.toByteArray();
         ready.reset();
