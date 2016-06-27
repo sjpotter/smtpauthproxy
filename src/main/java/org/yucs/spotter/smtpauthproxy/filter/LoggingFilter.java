@@ -4,8 +4,6 @@ import org.yucs.spotter.smtpauthproxy.logger.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 public class LoggingFilter implements Filter {
     final String prefix;
@@ -27,7 +25,7 @@ public class LoggingFilter implements Filter {
         String temp = new String(data.toByteArray()); //.replaceAll("\0", "");
         String[] splits = temp.split(delim, -1);
         for(int i=0; i < splits.length - 1; i++) {
-            logger.Log(prefix + splits[i]);
+            logger.log(prefix + splits[i]);
             ready.write(splits[i].getBytes());
             ready.write(delim.getBytes());
         }
@@ -51,7 +49,7 @@ public class LoggingFilter implements Filter {
     @Override
     public byte[] Flush() throws IOException {
         String temp = new String(data.toByteArray());
-        logger.Log(prefix + temp);
+        logger.log(prefix + temp);
 
         ready.write(data.toByteArray());
 

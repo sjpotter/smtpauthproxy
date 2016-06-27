@@ -12,13 +12,13 @@ public class FileLogger implements Logger {
     }
 
     @Override
-    public void Log(String s) throws IOException {
+    public void log(String s) throws IOException {
         out.write(s);
         out.write("\n");
     }
 
     @Override
-    public void Close() throws IOException {
+    public void close() throws IOException {
         out.close();
     }
 }

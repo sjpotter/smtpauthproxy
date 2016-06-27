@@ -5,7 +5,6 @@ import org.yucs.spotter.smtpauthproxy.filter.Filter;
 import org.yucs.spotter.smtpauthproxy.filter.LoggingFilter;
 import org.yucs.spotter.smtpauthproxy.logger.FileLogger;
 import org.yucs.spotter.smtpauthproxy.logger.Logger;
-import org.yucs.spotter.smtpauthproxy.logger.StdoutLogger;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
 
@@ -92,7 +91,7 @@ public abstract class AbstractProxy implements Proxy {
         }
 
         try {
-            l.Close();
+            l.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public class NullLogger implements Logger {
     @Override
-    public void Log(String s) throws IOException {
+    public void log(String s) throws IOException {
         return;
     }
 
     @Override
-    public void Close() { }
+    public void close() { }
 }
