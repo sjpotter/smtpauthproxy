@@ -3,7 +3,7 @@ package org.yucs.spotter.smtpauthproxy.filter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class NoFilter implements Filter {
+public class NullFilter implements Filter {
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
 
     @Override

@@ -3,7 +3,6 @@ package org.yucs.spotter.smtpauthproxy.proxy;
 import org.apache.commons.codec.binary.Base64;
 import org.yucs.spotter.smtpauthproxy.filter.Filter;
 import org.yucs.spotter.smtpauthproxy.filter.LoggingFilter;
-import org.yucs.spotter.smtpauthproxy.filter.NoFilter;
 import org.yucs.spotter.smtpauthproxy.utils.Config;
 import org.yucs.spotter.smtpauthproxy.utils.SocketsReaderWriter;
 
@@ -25,9 +24,9 @@ public abstract class AbstractProxy implements Proxy {
         this.client = client;
 
         c2s_filter = new LoggingFilter("c2s: ");
-        //c2s_filter = new NoFilter();
+        //c2s_filter = new NullFilter();
         s2c_filter = new LoggingFilter("s2c: ");
-        //s2c_filter = new NoFilter();
+        //s2c_filter = new NullFilter();
     }
 
     public abstract void connect() throws IOException;
